@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, Text, TextInput, View, TouchableOpacity,Dimensions, TouchableHighlight } from 'react-native';
+import { Image, StyleSheet, Platform, Text, TextInput, View, TouchableOpacity,Dimensions, TouchableHighlight, Keyboard } from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -27,6 +27,7 @@ export default function HomeScreen() {
     <ThemedView style={styles.container}>
      <ThemedView style={styles.inputContainer}>
         <TextInput
+        multiline
           style={styles.input}
           placeholder="검색어를 입력해주세요"
           placeholderTextColor="#ccc"
@@ -46,7 +47,7 @@ export default function HomeScreen() {
 
         <TouchableOpacity
           style={styles.goButton}
-          onPress={() => console.log('검색 → 글자')}>
+          onPress={Keyboard.dismiss}>
           <Text style={styles.goButtonText}>번역하기</Text>
         </TouchableOpacity>
       </ThemedView>
@@ -89,8 +90,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   input: {
-    height: 50,
+    height: height * 2 / 5,
     fontSize: 18,
+    paddingVertical: 20,
   },
   goContainer:{
     height: 50,
