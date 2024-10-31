@@ -7,7 +7,6 @@ import { ThemedView } from '@/components/ThemedView';
 import {FullWindowOverlay} from 'react-native-screens';
 import {Camera, Paperclip} from 'lucide-react-native';
 import React from 'react';
-import {Link} from 'expo-router';
 // import {Camera} from 'lucide-react-native';
 const { height } = Dimensions.get('window');
 
@@ -30,44 +29,39 @@ export default function HomeScreen() {
         <TextInput
         multiline
           style={styles.input}
-          placeholder="묵자 혹은 점자를 입력해주세요..."
+          placeholder="검색어를 입력해주세요"
           placeholderTextColor="#ccc"
         />
       </ThemedView>
 
       <ThemedView style={styles.goContainer}>
         <ThemedView style={styles.iconsContainer}>
-        <TouchableOpacity 
-        accessible={true}
-        accessibilityLabel="사진 업로드">
+        <TouchableOpacity>
           <Camera color="#ccc" size={40} absoluteStrokeWidth={true} style={styles.icons}/>
         </TouchableOpacity>
-        <TouchableOpacity
-        accessible={true}
-        accessibilityLabel="파일 업로드">
+        <TouchableOpacity>
           <Paperclip color="#ccc" size={35} absoluteStrokeWidth={true} style={styles.icons}/>
         </TouchableOpacity>
         </ThemedView>
         
-        <Link href="/result/1" asChild>
+
         <TouchableOpacity
           style={styles.goButton}
           onPress={Keyboard.dismiss}>
           <Text style={styles.goButtonText}>번역하기</Text>
         </TouchableOpacity>
-        </Link>
       </ThemedView>
 
       <ThemedView style={styles.buttonContainer}>
       <TouchableOpacity 
           style={styles.button}
-          onPress={() => console.log('점자 → 묵자')}>
-          <Text style={styles.buttonText}>점자 → 묵자</Text>
+          onPress={() => console.log('점자 → 글자')}>
+          <Text style={styles.buttonText}>점자 → 글자</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => console.log('묵자 → 점자')}>
-          <Text style={styles.buttonText}>묵자 → 점자</Text>
+          onPress={() => console.log('글자 → 점자')}>
+          <Text style={styles.buttonText}>글자 → 점자</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
@@ -90,13 +84,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   inputContainer: {
-    // marginTop: 30,
-    height: height * 1 / 3,
+    marginTop: 30,
+    height: height * 2 / 5,
     justifyContent: 'center',
     paddingHorizontal: 20,
   },
   input: {
-    height: height * 1 / 3,
+    height: height * 2 / 5,
     fontSize: 18,
     paddingVertical: 20,
   },
