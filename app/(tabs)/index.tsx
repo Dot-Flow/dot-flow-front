@@ -6,12 +6,18 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import {FullWindowOverlay} from 'react-native-screens';
 import {Camera, Paperclip} from 'lucide-react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {Link} from 'expo-router';
 // import {Camera} from 'lucide-react-native';
 const { height } = Dimensions.get('window');
 
 export default function HomeScreen() {
+
+  const [ toBraille, setToBraille ] = useState(false);
+
+  const handleButtonClick = (state: 'toBraille' | 'toText') => {
+    setToBraille(state == 'toBraille' ? true : false);
+  }
 
   var [ isPress, setIsPress ] = React.useState(false);
 
@@ -40,12 +46,12 @@ export default function HomeScreen() {
         <TouchableOpacity 
         accessible={true}
         accessibilityLabel="사진 업로드">
-          <Camera color="#ccc" size={40} absoluteStrokeWidth={true} style={styles.icons}/>
+          <Camera color="#a4a4a7" size={40} absoluteStrokeWidth={true} style={styles.icons}/>
         </TouchableOpacity>
         <TouchableOpacity
         accessible={true}
         accessibilityLabel="파일 업로드">
-          <Paperclip color="#ccc" size={35} absoluteStrokeWidth={true} style={styles.icons}/>
+          <Paperclip color="#a4a4a7" size={35} absoluteStrokeWidth={true} style={styles.icons}/>
         </TouchableOpacity>
         </ThemedView>
         
@@ -59,25 +65,15 @@ export default function HomeScreen() {
       </ThemedView>
 
       <ThemedView style={styles.buttonContainer}>
-      <TouchableOpacity 
-          style={styles.button}
-          onPress={() => console.log('점자 → 묵자')}>
-          <Text style={styles.buttonText}>점자 → 묵자</Text>
-        </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button}
-          onPress={() => console.log('묵자 → 점자')}>
-          <Text style={styles.buttonText}>묵자 → 점자</Text>
+          style={toBraille ? styles.button_clicked : styles.button_notClicked}
+          onPress={() => handleButtonClick('toBraille')}>
+          <Text style={toBraille ? styles.buttonText_clicked : styles.buttonText_notClicked}>묵자 → 점자</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => console.log('한글 → 영어')}>
-          <Text style={styles.buttonText}>한글 → 영어</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => console.log('영어 → 한글')}>
-          <Text style={styles.buttonText}>영어 → 한글</Text>
+        <TouchableOpacity 
+          style={!toBraille ? styles.button_clicked : styles.button_notClicked}
+          onPress={() => handleButtonClick('toText')}>
+          <Text style={!toBraille ? styles.buttonText_clicked : styles.buttonText_notClicked}>점자 → 묵자</Text>
         </TouchableOpacity>
       </ThemedView>
 
@@ -102,7 +98,7 @@ const styles = StyleSheet.create({
   },
   goContainer:{
     height: 50,
-    borderColor: '#ccc',
+    borderColor: '#E2E2E5',
     borderWidth: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -136,8 +132,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     justifyContent: 'space-between',
   },
-  button: {
-    flexBasis: '48%',
+  button_clicked: {
+    flexBasis: '100%',
     backgroundColor: '#F7F5FF',
     borderWidth: 1,
     borderColor: '#7359FF',
@@ -146,10 +142,26 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
     alignItems: 'center',
-    height: 130
+    height: 120
   },
-  buttonText: {
+  button_notClicked: {
+    flexBasis: '100%',
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#E2E2E5',
+    justifyContent: 'center',
+    borderRadius: 4,
+    marginTop: 20,
+    marginBottom: 10,
+    alignItems: 'center',
+    height: 120
+  },
+  buttonText_clicked: {
     color: '#7359FF',
+    fontSize: 16,
+  },
+  buttonText_notClicked: {
+    color: '#a4a4a7',
     fontSize: 16,
   },
   btnNormal: {
