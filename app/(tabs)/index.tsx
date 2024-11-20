@@ -8,12 +8,14 @@ import {FullWindowOverlay} from 'react-native-screens';
 import {Camera, Paperclip} from 'lucide-react-native';
 import React, {useState} from 'react';
 import {Link} from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
+
 // import {Camera} from 'lucide-react-native';
 const { height } = Dimensions.get('window');
 
 export default function HomeScreen() {
 
-  const [ toBraille, setToBraille ] = useState(false);
+  const [ toBraille, setToBraille ] = useState(true);
 
   const handleButtonClick = (state: 'toBraille' | 'toText') => {
     setToBraille(state == 'toBraille' ? true : false);
@@ -21,18 +23,49 @@ export default function HomeScreen() {
 
   var [ isPress, setIsPress ] = React.useState(false);
 
-  var touchProps = {
-    activeOpacity: 1,
-    underlayColor: 'blue',                               // <-- "backgroundColor" will be always overwritten by "underlayColor"
-    style: isPress ? styles.btnPress : styles.btnNormal, // <-- but you can still apply other style changes
-    onHideUnderlay: () => setIsPress(false),
-    onShowUnderlay: () => setIsPress(true),
-    onPress: () => console.log('HELLO'),                 // <-- "onPress" is apparently required
+  const [image, setImage] = useState<string | null>(null);
+
+  const openCamera = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Sorry, we need camera permissions to make this work!');
+      return;
+    }
+    try {
+      let result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+        aspect: [4, 3],
+      });
+      if (!result.canceled) {
+        console.log(result);
+      }
+    } catch (error) {
+      console.log("Error occurred while launching the camera: ", error);
+    }
+  };
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
   };
   
   return (
     <ThemedView style={styles.container}>
      <ThemedView style={styles.inputContainer}>
+     {image && <Image source={{ uri: image }} style={styles.image} />}
+
         <TextInput
         multiline
           style={styles.input}
@@ -42,16 +75,17 @@ export default function HomeScreen() {
       </ThemedView>
 
       <ThemedView style={styles.goContainer}>
+
         <ThemedView style={styles.iconsContainer}>
         <TouchableOpacity 
-        accessible={true}
+          accessible={true}
         accessibilityLabel="사진 업로드">
-          <Camera color="#a4a4a7" size={40} absoluteStrokeWidth={true} style={styles.icons}/>
+          <Camera color="#a4a4a7" size={40} absoluteStrokeWidth={true} style={styles.icons} onPress={openCamera}/>
         </TouchableOpacity>
         <TouchableOpacity
         accessible={true}
         accessibilityLabel="파일 업로드">
-          <Paperclip color="#a4a4a7" size={35} absoluteStrokeWidth={true} style={styles.icons}/>
+          <Paperclip color="#a4a4a7" size={35} absoluteStrokeWidth={true} style={styles.icons} onPress={pickImage}/>
         </TouchableOpacity>
         </ThemedView>
         
@@ -187,5 +221,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignItems: 'center',
     height: 130
-  }
+  },
+  image: {
+    width: 200,
+    height: 200,
+  },
 });
