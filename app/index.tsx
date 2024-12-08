@@ -1,16 +1,15 @@
-import {Image, StyleSheet, Platform, Text, TextInput, View, TouchableOpacity, Dimensions, TouchableHighlight, Keyboard} from 'react-native';
+import {Image, StyleSheet, Platform, Text, TextInput, View, TouchableOpacity, Dimensions, TouchableHighlight, Keyboard, NativeSyntheticEvent, TextInputKeyPressEventData} from 'react-native';
 
 import {HelloWave} from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import {ThemedText} from '@/components/ThemedText';
 import {ThemedView} from '@/components/ThemedView';
 import {FullWindowOverlay} from 'react-native-screens';
-import {Camera, Paperclip} from 'lucide-react-native';
+import {Camera, GripVertical, Paperclip, ShowerHead} from 'lucide-react-native';
 import React, {useState} from 'react';
 import {Link, router} from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 
-// import {Camera} from 'lucide-react-native';
 const {height} = Dimensions.get('window');
 
 export default function HomeScreen() {
@@ -65,6 +64,12 @@ export default function HomeScreen() {
     }
   };
 
+  const handleKeyDown = (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
+    if (e.nativeEvent.key == "Enter") {
+      Keyboard.dismiss();
+    }
+  }
+
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.contentContainer}>
@@ -74,7 +79,11 @@ export default function HomeScreen() {
             style={styles.input}
             placeholder="묵자 혹은 점자를 입력해주세요..."
             placeholderTextColor="#ccc"
-            onBlur={Keyboard.dismiss}
+            // onBlur={Keyboard.dismiss}
+            enablesReturnKeyAutomatically
+            onKeyPress={(e) => handleKeyDown(e)}
+          // onPress={(e) => {console.log("e.nativeEvent.target : ", e.nativeEvent.target)}}
+          // onPressOut={(e) => {e.nativeEvent.target == 'Enter' ? Keyboard.dismiss : null}}
           />
         </ThemedView>
 
@@ -100,6 +109,7 @@ export default function HomeScreen() {
           accessibilityLabel="사진 촬영"
           onPress={openCamera}>
           {/* <Camera color="#a4a4a7" size={40} absoluteStrokeWidth={true} style={styles.icons} onPress={openCamera}/> */}
+          <Camera color="black" size={35} absoluteStrokeWidth={true} style={styles.buttonIcons} />
           <Text style={styles.buttonText_clicked}>사진 촬영</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -108,6 +118,7 @@ export default function HomeScreen() {
           accessibilityLabel="파일 업로드"
           onPress={pickImage}>
           {/* <Paperclip color="#a4a4a7" size={35} absoluteStrokeWidth={true} style={styles.icons} onPress={pickImage}/> */}
+          <Paperclip color="black" size={35} absoluteStrokeWidth={true} style={styles.buttonIcons} />
           <Text style={styles.buttonText_clicked}>파일 업로드</Text>
         </TouchableOpacity>
 
@@ -115,6 +126,7 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={styles.goButton}
             onPress={Keyboard.dismiss}>
+            <GripVertical color="black" size={35} absoluteStrokeWidth={true} style={styles.buttonIcons} />
             <Text style={styles.goButtonText}>번역하기</Text>
           </TouchableOpacity>
         </Link>
@@ -201,7 +213,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
-
   buttonText_clicked: {
     color: 'black',
     fontSize: 16,
@@ -210,32 +221,11 @@ const styles = StyleSheet.create({
     color: '#a4a4a7',
     fontSize: 16,
   },
-  // btnNormal: {
-  //   flexBasis: '48%',
-  //   backgroundColor: 'white',
-  //   borderWidth: 1,
-  //   borderColor: '#F7F5FF',
-  //   justifyContent: 'center',
-  //   borderRadius: 4,
-  //   marginTop: 20,
-  //   marginBottom: 10,
-  //   alignItems: 'center',
-  //   height: 130
-  // },
-  // btnPress: {
-  //   flexBasis: '48%',
-  //   backgroundColor: '#F7F5FF',
-  //   borderWidth: 1,
-  //   borderColor: '#7359FF',
-  //   justifyContent: 'center',
-  //   borderRadius: 4,
-  //   marginTop: 20,
-  //   marginBottom: 10,
-  //   alignItems: 'center',
-  //   height: 130
-  // },
   image: {
     width: 200,
     height: 200,
   },
+  buttonIcons: {
+    marginBottom: 10
+  }
 });
