@@ -1,6 +1,6 @@
 {
   "name": "dotflow",
-  "main": "expo-router/entry",
+  "main": "node_modules/expo-router/entry.js",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
@@ -52,7 +52,8 @@
     "jest-expo": "~52.0.1",
     "react-native-dotenv": "^3.4.11",
     "react-test-renderer": "18.2.0",
-    "typescript": "~5.3.3"
+    "typescript": "~5.3.3",
+    "eslint-config-expo": "~8.0.1"
   },
   "private": true
 }
