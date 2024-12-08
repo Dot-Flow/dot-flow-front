@@ -16,8 +16,11 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
+    "@hackbg/dump": "^1.0.2",
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/stack": "^6.4.1",
+    "braille": "^1.1.0",
+    "braille-encode": "^2.0.1",
     "expo": "^52.0.6",
     "expo-constants": "~17.0.3",
     "expo-font": "~13.0.1",

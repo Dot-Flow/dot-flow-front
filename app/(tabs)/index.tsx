@@ -71,6 +71,7 @@ export default function HomeScreen() {
           style={styles.input}
           placeholder="묵자 혹은 점자를 입력해주세요..."
           placeholderTextColor="#ccc"
+          onBlur={Keyboard.dismiss}
         />
       </ThemedView>
 

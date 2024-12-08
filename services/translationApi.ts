@@ -1,15 +1,11 @@
 import apiClient from "./apiClient";
 
 /**
- * Delete a template
- * @param {string} aAUid - The active account Id.
- * @param {string} templateId - The id of the template that user wants to delete
- * @returns {Promise<void>} - Returns nothing
+ * Translate text string to braille
+ * @param {string} text - The text to be brailed
+ * @returns {Promise<string>} - Returns braille string
  */
 const stringToBrf = (text: string) => {
-	// const params = new URLSearchParams();
-	// params.append("aAUid", text);
-
 	const data = {
 		text,
 	};
