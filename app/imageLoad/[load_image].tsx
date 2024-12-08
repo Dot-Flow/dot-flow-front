@@ -1,26 +1,25 @@
-import React, { useEffect } from "react";
-import { View, Image, StyleSheet, ActivityIndicator } from "react-native";
-import { useRouter, useLocalSearchParams } from "expo-router";
+import React, {useEffect} from "react";
+import {View, Image, StyleSheet, ActivityIndicator} from "react-native";
+import {useRouter, useLocalSearchParams} from "expo-router";
 
 export default function LoadingScreen() {
   const router = useRouter();
-  const { load_image } = useLocalSearchParams(); // Use `useLocalSearchParams`
-
+  const {load_image} = useLocalSearchParams();
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.push("/result/1"); // Navigate to the result page after 100ms
-    }, 5000);
+      router.push("/result/1");
+    }, 3500);
 
     return () => clearTimeout(timer);
   }, [router]);
 
   if (!load_image || typeof load_image !== "string") {
-    return null; // Handle invalid or missing parameter gracefully
+    return null;
   }
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: load_image }} style={styles.image} />
+      <Image source={{uri: load_image}} style={styles.image} />
       <View style={styles.overlay}>
         <ActivityIndicator size="large" color="#ffffff" />
       </View>
