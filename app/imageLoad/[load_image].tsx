@@ -7,7 +7,7 @@ export default function LoadingScreen() {
   const {load_image} = useLocalSearchParams();
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.push("/result/1");
+      router.push("/result/toTextResult");
     }, 3500);
 
     return () => clearTimeout(timer);
