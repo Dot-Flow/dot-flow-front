@@ -9,11 +9,11 @@ import {brailleDump} from '@hackbg/dump'
 const {height} = Dimensions.get('window');
 // const br = require('braille');
 
-const ResultPage = () => {
+const ToTextResult = () => {
 
-  useEffect(() => {
-    fetchResult();
-  }, [])
+  // useEffect(() => {
+  //   fetchResult();
+  // }, [])
 
 
   const {result_id} = useLocalSearchParams();
@@ -23,21 +23,14 @@ const ResultPage = () => {
     Speech.speak(read, {language: 'ko'});
   };
 
-  const fetchResult = async () => {
+  // const fetchResult = async () => {
 
-    const response = await translationApi.stringToBrf("activeAccount.uid");
-    // console.log("response : ", response);
-    // const code = br.toBraille(response);
-    // console.log("code : ", code)
-    const resEncodedMessage = new TextEncoder().encode(response)
-    // const br = encode(response);
-    console.log(brailleDump(resEncodedMessage))
-
-  };
+  //   const response = await translationApi.stringToBrf("activeAccount.uid");
+  // };
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{headerTitle: '번역결과'}} />
+      <Stack.Screen options={{headerTitle: '역점역 결과'}} />
       {/* Header */}
       <View style={styles.headerContainer}>
         <TouchableOpacity style={styles.categoryBadge}>
@@ -67,7 +60,7 @@ const ResultPage = () => {
   );
 }
 
-export default ResultPage;
+export default ToTextResult;
 
 const styles = StyleSheet.create({
   container: {
