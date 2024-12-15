@@ -9,3 +9,7 @@ export interface BrfResponse {
 	unicodeArray: string;
 	brfFile: string[];
 }
+
+export interface UnicodeRequest {
+	unicodeArray: string[];
+}

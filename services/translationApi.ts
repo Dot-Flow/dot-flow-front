@@ -1,5 +1,5 @@
 import apiClient from "./apiClient";
-import {BrfResponse, TextResponse} from "./types";
+import {BrfResponse, TextResponse, UnicodeRequest} from "./types";
 
 /**
  * Translate text string to braille
@@ -12,6 +12,19 @@ const stringToBrf = (text: string) => {
 	};
 
 	return apiClient.post<BrfResponse>(`/translate/to-brf/text`, data);
+};
+
+/**
+ * Translate unicode string(braille) to text
+ * @param {UnicodeRequest} unicodeArray - The unicode array to be de-brailled
+ * @returns {TextResponse} - Returns summary, translation result, file
+ */
+const unicodeToText = (unicodeArray: UnicodeRequest) => {
+	const data = {
+		unicodeArray,
+	};
+
+	return apiClient.post<TextResponse>(`/translate/to-text/unicode`, data);
 };
 
 /**
