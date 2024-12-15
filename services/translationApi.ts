@@ -20,11 +20,10 @@ const stringToBrf = (text: string) => {
  * @returns {TextResponse} - Returns summary, translation result, file
  */
 const unicodeToText = (unicodeArray: UnicodeRequest) => {
-	const data = {
-		unicodeArray,
-	};
-
-	return apiClient.post<TextResponse>(`/translate/to-text/unicode`, data);
+	return apiClient.post<TextResponse>(
+		`/translate/to-text/unicode`,
+		unicodeArray
+	);
 };
 
 /**
@@ -79,4 +78,4 @@ const imageToText = (fileUri: string) => {
 	});
 };
 
-export default {stringToBrf, imageToBrf, imageToText};
+export default {stringToBrf, imageToBrf, imageToText, unicodeToText};

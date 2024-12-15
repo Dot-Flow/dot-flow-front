@@ -9,20 +9,83 @@ import {Camera, GripVertical, Paperclip, ShowerHead} from 'lucide-react-native';
 import React, {useState} from 'react';
 import {Link, router} from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
+import translationApi from '@/services/translationApi';
+import {encode, decode} from "braille-encode";
 
 const {height} = Dimensions.get('window');
 
 export default function HomeScreen() {
-
+  const [image, setImage] = useState<string | null>(null);
   const [toBraille, setToBraille] = useState(true);
+  const [value, setValue] = useState<string>('');
 
   const handleButtonClick = (state: 'toBraille' | 'toText') => {
     setToBraille(state == 'toBraille' ? true : false);
   }
 
-  var [isPress, setIsPress] = React.useState(false);
+  const handleKeyDown = (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
+    if (e.nativeEvent.key == "Enter") {
+      Keyboard.dismiss();
+    }
+  }
 
-  const [image, setImage] = useState<string | null>(null);
+  function extractUnicodeArray(brlTexts: string): string[] {
+    const unicodeList: string[] = [];
+
+    // Iterate through each Braille string in the input list
+    for (const text of brlTexts) {
+      // Remove any double quotes from the string
+      const sanitizedText = text.replace(/"/g, "");
+
+      // Iterate through each character in the sanitized string
+      for (const char of sanitizedText) {
+        // Convert the character to its Unicode value and format as a 4-digit hex
+        unicodeList.push(char.charCodeAt(0).toString(16).toUpperCase().padStart(4, "0"));
+      }
+    }
+
+    return unicodeList;
+  }
+
+  const handleTranslateButtonClick = async () => {
+    Keyboard.dismiss();
+
+    // 점역
+    if (toBraille) {
+      try {
+        let result = await translationApi.stringToBrf(value);
+        if (result) {
+          console.log(result);
+          router.push({
+            pathname: "/result/toBrailleResult",
+          });
+        }
+      } catch (error) {
+        console.log("Error occurred while getting braille response: ", error);
+      }
+      return;
+    }
+
+    // 역점역
+    try {
+      const unicodeArray = extractUnicodeArray(value);
+      const payload = {
+        unicodeArray: [unicodeArray.join(" ")]
+      };
+
+      const result = await translationApi.unicodeToText(payload);
+      console.log("API Result:", result);
+      if (result) {
+        router.push({
+          pathname: "/result/toTextResult",
+        });
+      }
+      return;
+    } catch (error) {
+      console.log("Error occurred while launching the camera: ", error);
+    }
+
+  }
 
   const openCamera = async () => {
     const {status} = await ImagePicker.requestCameraPermissionsAsync();
@@ -64,12 +127,6 @@ export default function HomeScreen() {
     }
   };
 
-  const handleKeyDown = (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
-    if (e.nativeEvent.key == "Enter") {
-      Keyboard.dismiss();
-    }
-  }
-
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.contentContainer}>
@@ -79,14 +136,12 @@ export default function HomeScreen() {
             style={styles.input}
             placeholder="묵자 혹은 점자를 입력해주세요..."
             placeholderTextColor="#ccc"
-            // onBlur={Keyboard.dismiss}
             enablesReturnKeyAutomatically
             onKeyPress={(e) => handleKeyDown(e)}
-          // onPress={(e) => {console.log("e.nativeEvent.target : ", e.nativeEvent.target)}}
-          // onPressOut={(e) => {e.nativeEvent.target == 'Enter' ? Keyboard.dismiss : null}}
+            value={value}
+            onChangeText={(text) => setValue(text)}
           />
         </ThemedView>
-
       </ThemedView>
 
       <ThemedView style={styles.brailleOrText}>
@@ -122,14 +177,15 @@ export default function HomeScreen() {
           <Text style={styles.buttonText_clicked}>파일 업로드</Text>
         </TouchableOpacity>
 
-        <Link href="/result/1" asChild>
-          <TouchableOpacity
-            style={styles.goButton}
-            onPress={Keyboard.dismiss}>
-            <GripVertical color="black" size={35} absoluteStrokeWidth={true} style={styles.buttonIcons} />
-            <Text style={styles.goButtonText}>번역하기</Text>
-          </TouchableOpacity>
-        </Link>
+        {/* <Link href="/result/1" asChild> */}
+        <TouchableOpacity
+          style={styles.goButton}
+          // onPress={Keyboard.dismiss}>
+          onPress={handleTranslateButtonClick}>
+          <GripVertical color="black" size={35} absoluteStrokeWidth={true} style={styles.buttonIcons} />
+          <Text style={styles.goButtonText}>번역하기</Text>
+        </TouchableOpacity>
+        {/* </Link> */}
 
       </ThemedView>
     </ThemedView >
