@@ -12,10 +12,6 @@ const ToTextResult = () => {
   const [showSummary, setShowSummary] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log("summary asdfsadfsafdsa: ", summary);
-    console.log("result asdf: ", result);
-    console.log("summary.length : ", summary.length);
-
     if (summary.length >= 100) setShowSummary(true);
     else setShowSummary(false);
   }, [summary, result, textFile])

@@ -32,7 +32,7 @@ export default function HomeScreen() {
   );
 
   const handleButtonClick = (state: 'toBraille' | 'toText') => {
-    console.log("tobraille state : ", state)
+    // console.log("tobraille state : ", state)
     setToBraille(state == 'toBraille' ? true : false);
   }
 
@@ -65,7 +65,6 @@ export default function HomeScreen() {
       try {
         let result = await translationApi.stringToBrf(value);
         if (result) {
-          console.log(result);
           router.push({
             pathname: "/result/toBrailleResult",
             params: {
@@ -89,7 +88,6 @@ export default function HomeScreen() {
       };
 
       const result = await translationApi.unicodeToText(payload);
-      console.log("API Result:", result);
       if (result) {
         router.push({
           pathname: "/result/toTextResult",
@@ -184,7 +182,6 @@ export default function HomeScreen() {
         else if (["brf"].includes(extension)) {
           try {
             const response = await translationApi.brfToText(uri);
-            console.log("BRF → Text response:", response);
 
             router.push({
               pathname: "/result/toTextResult",

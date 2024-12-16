@@ -15,8 +15,6 @@ const ToBrailleResult = () => {
 
 
     useEffect(() => {
-        console.log("summary 2222: ", summary);
-        console.log("result 1111: ", unicodeArray);
         if (unicodeArray) {
             const unicodeValues = (unicodeArray as string).split(",");
             const brailleOutput = unicodeValues
@@ -25,7 +23,6 @@ const ToBrailleResult = () => {
 
             setBrailleText(brailleOutput);
         }
-        console.log("summary.length : ", summary.length);
         if (summary.length >= 100) setShowSummary(true);
         else setShowSummary(false);
     }, [summary, unicodeArray, brfFile])

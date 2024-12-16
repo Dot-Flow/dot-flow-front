@@ -24,7 +24,6 @@ const StackLayout = () => {
   if (!loaded) {
     return null;
   }
-  console.log('StackLayout loaded');
 
   return (
     <ThemeProvider value={DefaultTheme}>
