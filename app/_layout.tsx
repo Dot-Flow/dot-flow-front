@@ -35,8 +35,12 @@ const StackLayout = () => {
         />
         <Stack.Screen name="(tabs)" options={{headerShown: false, title: '홈'}} />
         <Stack.Screen
-          name="imageLoad"
-          options={{headerShown: false, title: '이미지 로딩중'}}
+          name="imageLoad/index"
+          options={{title: "Parent Header", headerShown: true}}
+        />
+        <Stack.Screen
+          name="imageLoad/[load_image]"
+          options={{headerShown: false}}
         />
       </Stack>
     </ThemeProvider>
