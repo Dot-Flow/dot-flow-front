@@ -46,7 +46,7 @@ export default function LoadingScreen() {
         let result = await translationApi.imageToBrf(load_image);
         if (result) {
           console.log(result);
-          router.push({
+          router.replace({
             pathname: "/result/toBrailleResult",
             params: {
               summary: result.summary,
@@ -66,7 +66,7 @@ export default function LoadingScreen() {
       let result = await translationApi.imageToText(load_image);
       if (result) {
         console.log(result);
-        router.push({
+        router.replace({
           pathname: "/result/toTextResult",
           params: {
             summary: result.summary,
