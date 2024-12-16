@@ -45,11 +45,11 @@ const imageToBrf = (fileUri: string) => {
 		type: type,
 	} as any);
 
-	// return apiClient.post<BrfResponse>("/translate/to-brf/image", formData, {
-	// 	headers: {
-	// 		"Content-Type": "multipart/form-data",
-	// 	},
-	// });
+	return apiClient.post<BrfResponse>("/translate/to-brf/image", formData, {
+		headers: {
+			"Content-Type": "multipart/form-data",
+		},
+	});
 };
 
 /**
@@ -70,11 +70,11 @@ const imageToText = (fileUri: string) => {
 		type: type,
 	} as any);
 
-	// return apiClient.post<TextResponse>("/translate/to-text/image", formData, {
-	// 	headers: {
-	// 		"Content-Type": "multipart/form-data",
-	// 	},
-	// });
+	return apiClient.post<TextResponse>("/translate/to-text/image", formData, {
+		headers: {
+			"Content-Type": "multipart/form-data",
+		},
+	});
 };
 
 export default {stringToBrf, imageToBrf, imageToText, unicodeToText};
