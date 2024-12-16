@@ -1,8 +1,9 @@
 import {Stack, useLocalSearchParams} from 'expo-router';
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Dimensions, Text, TextInput, TouchableOpacity, View, ScrollView} from 'react-native';
+import {StyleSheet, Dimensions, Text, TextInput, TouchableOpacity, View, ScrollView, Alert} from 'react-native';
 import * as Speech from 'expo-speech';
-
+import * as Sharing from "expo-sharing";
+import * as FileSystem from "expo-file-system";
 
 const {height} = Dimensions.get('window');
 // const br = require('braille');
@@ -36,6 +37,37 @@ const ToBrailleResult = () => {
         }
     };
 
+    const handleSaveBrfFile = async () => {
+        if (!brfFile || typeof brfFile !== "string") {
+            Alert.alert("No BRF data found.");
+            return;
+        }
+
+        try {
+            const fileUri = FileSystem.documentDirectory + "translated.brf";
+
+            await FileSystem.writeAsStringAsync(fileUri, brfFile, {
+                encoding: FileSystem.EncodingType.Base64,
+            });
+
+            const canShare = await Sharing.isAvailableAsync();
+            if (canShare) {
+                await Sharing.shareAsync(fileUri, {
+                    mimeType: "application/octet-stream", // or "application/x-braille-brf"
+                    dialogTitle: "Save or share your BRF file",
+                });
+            } else {
+                Alert.alert(
+                    "Sharing not available",
+                    "File saved locally at: " + fileUri
+                );
+            }
+        } catch (error) {
+            console.error("Error saving BRF file:", error);
+            Alert.alert("Error saving file", String(error));
+        }
+    };
+
     return (
         <View style={styles.container}>
             <Stack.Screen options={{headerTitle: '점역 결과'}} />
@@ -50,7 +82,7 @@ const ToBrailleResult = () => {
 
             {/* Action Buttons */}
             <View style={styles.actionButtonContainer}>
-                <TouchableOpacity style={styles.saveButton}>
+                <TouchableOpacity style={styles.saveButton} onPress={handleSaveBrfFile}>
                     <Text style={styles.actionButtonText}>저장</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.listenButton} onPress={readOut}>

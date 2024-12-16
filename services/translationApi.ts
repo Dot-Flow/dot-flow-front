@@ -77,4 +77,27 @@ const imageToText = (fileUri: string) => {
 	});
 };
 
-export default {stringToBrf, imageToBrf, imageToText, unicodeToText};
+/**
+ * Translate .brf text content into normal text
+ * @param {string} brfContent - The raw .brf file contents as a string
+ * @returns {TextResponse} - Returns summary, translation result, file
+ */
+const brfToText = (fileUri: string) => {
+	const formData = new FormData();
+
+	const filename = fileUri.split("/").pop() || "uploaded_file.brf";
+	const type = "application/octet-stream"; // .brf is binary
+
+	// IMPORTANT: The server expects the multipart field name as 'file'
+	formData.append("file", {
+		uri: fileUri,
+		name: filename,
+		type: type,
+	} as any);
+
+	return apiClient.post<TextResponse>("/translate/to-text/brf", formData, {
+		headers: {"Content-Type": "multipart/form-data"},
+	});
+};
+
+export default {stringToBrf, imageToBrf, imageToText, unicodeToText, brfToText};
