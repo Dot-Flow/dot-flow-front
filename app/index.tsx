@@ -134,7 +134,7 @@ export default function HomeScreen() {
   const pickFileOrImage = async () => {
     try {
       const res = await DocumentPicker.getDocumentAsync({
-        type: "*/*", // allows images, .txt, .brf, etc.
+        type: "*/*",
         copyToCacheDirectory: true,
       });
 
@@ -147,6 +147,7 @@ export default function HomeScreen() {
           return;
         }
 
+        setIsLoading(true);
         if (["png", "jpg", "jpeg"].includes(extension)) {
           if (toBraille) {
             router.push({
@@ -162,11 +163,25 @@ export default function HomeScreen() {
 
         }
         else if (["txt"].includes(extension)) {
-          // await handleTextOrBrfFile(uri, extension);
 
         }
         else if (["brf"].includes(extension)) {
-          // await handleTextOrBrfFile(uri, extension);
+          try {
+            const response = await translationApi.brfToText(uri);
+            console.log("BRF → Text response:", response);
+
+            router.push({
+              pathname: "/result/toTextResult",
+              params: {
+                summary: response.summary,
+                result: response.result,
+                textFile: response.textFile,
+              },
+            });
+          } catch (error) {
+            console.error("Error uploading BRF as form-data:", error);
+          }
+          return;
 
         }
         else {
@@ -178,24 +193,9 @@ export default function HomeScreen() {
 
     } catch (error) {
       console.error("Error picking file:", error);
+    } finally {
+      setIsLoading(false);
     }
-    // try {
-    //   let result = await DocumentPicker.getDocumentAsync({
-    //     type: "*/*",
-    //     copyToCacheDirectory: true,
-    //   });
-
-    //   if (!result.canceled && result.assets?.[0]?.uri) {
-    //     console.log("URI:", result.assets[0].uri);
-    //     router.push({
-    //       pathname: "/imageLoad/[load_image]",
-    //       params: {load_image: result.assets[0].uri, toBraille: "false"},
-    //     });
-    //   }
-    // } catch (error) {
-    //   console.error("Error picking file:", error);
-    // }
-
   };
 
   return (
