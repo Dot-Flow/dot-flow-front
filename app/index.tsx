@@ -7,13 +7,14 @@ import {ThemedView} from '@/components/ThemedView';
 import {FullWindowOverlay} from 'react-native-screens';
 import {Camera, GripVertical, Paperclip, ShowerHead} from 'lucide-react-native';
 import React, {useState} from 'react';
-import {Link, router} from 'expo-router';
+import {Link, router, useFocusEffect} from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import translationApi from '@/services/translationApi';
 import {TextResponse} from '@/services/types';
 import apiClient from '@/services/apiClient';
 import * as FileSystem from "expo-file-system";
-
+import * as DocumentPicker from "expo-document-picker";
+import LoadingOverlay from './loading';
 
 const {height} = Dimensions.get('window');
 
@@ -21,6 +22,14 @@ export default function HomeScreen() {
   const [image, setImage] = useState<string | null>(null);
   const [toBraille, setToBraille] = useState(true);
   const [value, setValue] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setValue("");
+      setIsLoading(false);
+    }, [])
+  );
 
   const handleButtonClick = (state: 'toBraille' | 'toText') => {
     console.log("tobraille state : ", state)
@@ -52,6 +61,7 @@ export default function HomeScreen() {
   }
 
   const handleTranslateButtonClick = async () => {
+    setIsLoading(true);
     Keyboard.dismiss();
 
     // 점역
@@ -97,6 +107,8 @@ export default function HomeScreen() {
       return;
     } catch (error) {
       console.log("Error occurred while launching the camera: ", error);
+    } finally {
+      setIsLoading(false);
     }
 
   }
@@ -124,22 +136,39 @@ export default function HomeScreen() {
     }
   };
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      base64: true,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.7,
-    });
-
-    if (!result.canceled && result.assets?.[0]?.uri) {
-      const fileUri = result.assets[0].uri;
-      setImage(fileUri);
-      router.push({
-        pathname: "/imageLoad/[load_image]",
-        params: {load_image: fileUri, toBraille: toBraille.toString()},
+  const pickFileOrImage = async () => {
+    try {
+      let result = await DocumentPicker.getDocumentAsync({
+        type: "*/*", // pick any file or image
+        copyToCacheDirectory: true,
       });
+
+      if (!result.canceled && result.assets?.[0]?.uri) {
+        console.log("URI:", result.assets[0].uri);
+        // If you want to send it to /imageLoad
+        router.push({
+          pathname: "/imageLoad/[load_image]",
+          params: {load_image: result.assets[0].uri, toBraille: "false"},
+        });
+      }
+    } catch (error) {
+      console.error("Error picking file:", error);
     }
+    // let result = await ImagePicker.launchImageLibraryAsync({
+    //   base64: true,
+    //   allowsEditing: true,
+    //   aspect: [4, 3],
+    //   quality: 0.7,
+    // });
+
+    // if (!result.canceled && result.assets?.[0]?.uri) {
+    //   const fileUri = result.assets[0].uri;
+    //   setImage(fileUri);
+    //   router.push({
+    //     pathname: "/imageLoad/[load_image]",
+    //     params: {load_image: fileUri, toBraille: toBraille.toString()},
+    //   });
+    // }
   };
 
   return (
@@ -186,7 +215,7 @@ export default function HomeScreen() {
           style={styles.fileButton}
           accessible={true}
           accessibilityLabel="파일 업로드"
-          onPress={pickImage}>
+          onPress={pickFileOrImage}>
           {/* <Paperclip color="#a4a4a7" size={35} absoluteStrokeWidth={true} style={styles.icons} onPress={pickImage}/> */}
           <Paperclip color="black" size={35} absoluteStrokeWidth={true} style={styles.buttonIcons} />
           <Text style={styles.buttonText_clicked}>파일 업로드</Text>
@@ -203,6 +232,7 @@ export default function HomeScreen() {
         {/* </Link> */}
 
       </ThemedView>
+      <LoadingOverlay visible={isLoading} />
     </ThemedView >
   );
 }
