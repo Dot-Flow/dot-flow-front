@@ -163,7 +163,23 @@ export default function HomeScreen() {
 
         }
         else if (["txt"].includes(extension)) {
+          try {
+            const fileContent = await FileSystem.readAsStringAsync(uri, {
+              encoding: FileSystem.EncodingType.UTF8,
+            });
+            const response = await translationApi.stringToBrf(fileContent);
 
+            router.push({
+              pathname: "/result/toBrailleResult",
+              params: {
+                summary: response.summary,
+                unicodeArray: response.unicodeArray,
+                brfFile: response.brfFile,
+              },
+            });
+          } catch (error) {
+            console.error("Error uploading .txt file to stringToBrf:", error);
+          }
         }
         else if (["brf"].includes(extension)) {
           try {
@@ -181,8 +197,6 @@ export default function HomeScreen() {
           } catch (error) {
             console.error("Error uploading BRF as form-data:", error);
           }
-          return;
-
         }
         else {
           Alert.alert("지원하지 않는 확장자", `.png, .jpg, .jpeg, .txt, 혹은 .brf 파일만을 선택할 수 있습니다.`);

@@ -18,13 +18,12 @@ const ToBrailleResult = () => {
         console.log("summary 2222: ", summary);
         console.log("result 1111: ", unicodeArray);
         if (unicodeArray) {
-            // Convert the comma-separated Unicode values into Braille characters
-            const unicodeValues = (unicodeArray as string).split(","); // Split the string into an array
+            const unicodeValues = (unicodeArray as string).split(",");
             const brailleOutput = unicodeValues
-                .map((unicode) => String.fromCharCode(parseInt(unicode, 16))) // Convert hex to character
-                .join(""); // Join characters into a single string
+                .map((unicode) => String.fromCharCode(parseInt(unicode, 16)))
+                .join("");
 
-            setBrailleText(brailleOutput); // Set the decoded Braille text
+            setBrailleText(brailleOutput);
         }
         console.log("summary.length : ", summary.length);
         if (summary.length >= 100) setShowSummary(true);
@@ -53,7 +52,7 @@ const ToBrailleResult = () => {
             const canShare = await Sharing.isAvailableAsync();
             if (canShare) {
                 await Sharing.shareAsync(fileUri, {
-                    mimeType: "application/octet-stream", // or "application/x-braille-brf"
+                    mimeType: "application/octet-stream",
                     dialogTitle: "Save or share your BRF file",
                 });
             } else {
