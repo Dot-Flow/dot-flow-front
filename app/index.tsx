@@ -10,7 +10,10 @@ import React, {useState} from 'react';
 import {Link, router} from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import translationApi from '@/services/translationApi';
-import {encode, decode} from "braille-encode";
+import {TextResponse} from '@/services/types';
+import apiClient from '@/services/apiClient';
+import * as FileSystem from "expo-file-system";
+
 
 const {height} = Dimensions.get('window');
 
@@ -20,6 +23,7 @@ export default function HomeScreen() {
   const [value, setValue] = useState<string>('');
 
   const handleButtonClick = (state: 'toBraille' | 'toText') => {
+    console.log("tobraille state : ", state)
     setToBraille(state == 'toBraille' ? true : false);
   }
 
@@ -58,6 +62,11 @@ export default function HomeScreen() {
           console.log(result);
           router.push({
             pathname: "/result/toBrailleResult",
+            params: {
+              summary: result.summary,
+              unicodeArray: result.unicodeArray,
+              brfFile: result.brfFile,
+            },
           });
         }
       } catch (error) {
@@ -78,6 +87,11 @@ export default function HomeScreen() {
       if (result) {
         router.push({
           pathname: "/result/toTextResult",
+          params: {
+            summary: result.summary,
+            result: result.result,
+            textFile: result.textFile,
+          },
         });
       }
       return;
@@ -95,7 +109,7 @@ export default function HomeScreen() {
     }
     try {
       let result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        // mediaTypes: ImagePicker. .Images,
         quality: 1,
         aspect: [4, 3],
       });
@@ -112,17 +126,18 @@ export default function HomeScreen() {
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      base64: true,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.7,
     });
 
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
+    if (!result.canceled && result.assets?.[0]?.uri) {
+      const fileUri = result.assets[0].uri;
+      setImage(fileUri);
       router.push({
         pathname: "/imageLoad/[load_image]",
-        params: {load_image: result.assets[0].uri},
+        params: {load_image: fileUri, toBraille: toBraille.toString()},
       });
     }
   };

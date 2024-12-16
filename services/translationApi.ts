@@ -45,11 +45,11 @@ const imageToBrf = (fileUri: string) => {
 		type: type,
 	} as any);
 
-	return apiClient.post<BrfResponse>("translate/to-brf/image", formData, {
-		headers: {
-			"Content-Type": "multipart/form-data",
-		},
-	});
+	// return apiClient.post<BrfResponse>("/translate/to-brf/image", formData, {
+	// 	headers: {
+	// 		"Content-Type": "multipart/form-data",
+	// 	},
+	// });
 };
 
 /**
@@ -59,23 +59,22 @@ const imageToBrf = (fileUri: string) => {
  */
 const imageToText = (fileUri: string) => {
 	const formData = new FormData();
-	// Extract the file name and provide a fallback in case it's undefined
 	const filename = fileUri.split("/").pop() || "uploaded_file.jpg";
+	const extension = filename.split(".").pop() || "jpeg";
+	const type = `image/${extension}`;
 
-	// Determine the MIME type based on the file extension
-	const type = `image/${filename.split(".").pop() || "jpeg"}`;
-
-	formData.append("multipartFile", {
+	// The server expects a field name "image" based on your Swagger doc
+	formData.append("image", {
 		uri: fileUri,
 		name: filename,
 		type: type,
 	} as any);
 
-	return apiClient.post<TextResponse>("translate/to-text/image", formData, {
-		headers: {
-			"Content-Type": "multipart/form-data",
-		},
-	});
+	// return apiClient.post<TextResponse>("/translate/to-text/image", formData, {
+	// 	headers: {
+	// 		"Content-Type": "multipart/form-data",
+	// 	},
+	// });
 };
 
 export default {stringToBrf, imageToBrf, imageToText, unicodeToText};
