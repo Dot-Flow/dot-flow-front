@@ -1,7 +1,9 @@
 import {Stack, useLocalSearchParams} from 'expo-router';
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Dimensions, Text, TextInput, TouchableOpacity, View, ScrollView} from 'react-native';
+import {StyleSheet, Dimensions, Text, TextInput, TouchableOpacity, View, ScrollView, Alert} from 'react-native';
 import * as Speech from 'expo-speech';
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
 
 const {height} = Dimensions.get('window');
 
@@ -26,6 +28,37 @@ const ToTextResult = () => {
     }
   };
 
+  const handleSaveTxtFile = async () => {
+    try {
+      if (!textFile || typeof textFile !== "string") {
+        Alert.alert("No text file data found.");
+        return;
+      }
+
+      const fileUri = FileSystem.documentDirectory + "translated.txt";
+
+      await FileSystem.writeAsStringAsync(fileUri, textFile, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      const canShare = await Sharing.isAvailableAsync();
+      if (canShare) {
+        await Sharing.shareAsync(fileUri, {
+          mimeType: "text/plain",
+          dialogTitle: "Save or share your text file",
+        });
+      } else {
+        Alert.alert(
+          "Sharing not available",
+          "File saved locally at: " + fileUri
+        );
+      }
+    } catch (error) {
+      console.error("Error saving text file:", error);
+      Alert.alert("Error saving file", String(error));
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Stack.Screen options={{headerTitle: '역점역 결과'}} />
@@ -40,7 +73,7 @@ const ToTextResult = () => {
 
       {/* Action Buttons */}
       <View style={styles.actionButtonContainer}>
-        <TouchableOpacity style={styles.saveButton}>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSaveTxtFile}>
           <Text style={styles.actionButtonText}>저장</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.listenButton} onPress={readOut}>
