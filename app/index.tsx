@@ -45,14 +45,10 @@ export default function HomeScreen() {
   function extractUnicodeArray(brlTexts: string): string[] {
     const unicodeList: string[] = [];
 
-    // Iterate through each Braille string in the input list
     for (const text of brlTexts) {
-      // Remove any double quotes from the string
       const sanitizedText = text.replace(/"/g, "");
 
-      // Iterate through each character in the sanitized string
       for (const char of sanitizedText) {
-        // Convert the character to its Unicode value and format as a 4-digit hex
         unicodeList.push(char.charCodeAt(0).toString(16).toUpperCase().padStart(4, "0"));
       }
     }
@@ -121,7 +117,6 @@ export default function HomeScreen() {
     }
     try {
       let result = await ImagePicker.launchCameraAsync({
-        // mediaTypes: ImagePicker. .Images,
         quality: 1,
         aspect: [4, 3],
       });
@@ -139,13 +134,12 @@ export default function HomeScreen() {
   const pickFileOrImage = async () => {
     try {
       let result = await DocumentPicker.getDocumentAsync({
-        type: "*/*", // pick any file or image
+        type: "*/*",
         copyToCacheDirectory: true,
       });
 
       if (!result.canceled && result.assets?.[0]?.uri) {
         console.log("URI:", result.assets[0].uri);
-        // If you want to send it to /imageLoad
         router.push({
           pathname: "/imageLoad/[load_image]",
           params: {load_image: result.assets[0].uri, toBraille: "false"},
@@ -154,21 +148,7 @@ export default function HomeScreen() {
     } catch (error) {
       console.error("Error picking file:", error);
     }
-    // let result = await ImagePicker.launchImageLibraryAsync({
-    //   base64: true,
-    //   allowsEditing: true,
-    //   aspect: [4, 3],
-    //   quality: 0.7,
-    // });
 
-    // if (!result.canceled && result.assets?.[0]?.uri) {
-    //   const fileUri = result.assets[0].uri;
-    //   setImage(fileUri);
-    //   router.push({
-    //     pathname: "/imageLoad/[load_image]",
-    //     params: {load_image: fileUri, toBraille: toBraille.toString()},
-    //   });
-    // }
   };
 
   return (
