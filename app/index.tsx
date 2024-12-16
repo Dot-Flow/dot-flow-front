@@ -1,4 +1,4 @@
-import {Image, StyleSheet, Platform, Text, TextInput, View, TouchableOpacity, Dimensions, TouchableHighlight, Keyboard, NativeSyntheticEvent, TextInputKeyPressEventData} from 'react-native';
+import {Image, StyleSheet, Platform, Text, TextInput, View, TouchableOpacity, Dimensions, TouchableHighlight, Keyboard, NativeSyntheticEvent, TextInputKeyPressEventData, Alert} from 'react-native';
 
 import {HelloWave} from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -133,21 +133,68 @@ export default function HomeScreen() {
 
   const pickFileOrImage = async () => {
     try {
-      let result = await DocumentPicker.getDocumentAsync({
-        type: "*/*",
+      const res = await DocumentPicker.getDocumentAsync({
+        type: "*/*", // allows images, .txt, .brf, etc.
         copyToCacheDirectory: true,
       });
 
-      if (!result.canceled && result.assets?.[0]?.uri) {
-        console.log("URI:", result.assets[0].uri);
-        router.push({
-          pathname: "/imageLoad/[load_image]",
-          params: {load_image: result.assets[0].uri, toBraille: "false"},
-        });
+      if (!res.canceled && res.assets?.[0]?.uri) {
+        const {uri, name} = res.assets[0];
+        const extension = name.split('.').pop()?.toLowerCase();
+
+        if (!extension) {
+          Alert.alert("확장자가 존재하지 않습니다.");
+          return;
+        }
+
+        if (["png", "jpg", "jpeg"].includes(extension)) {
+          if (toBraille) {
+            router.push({
+              pathname: "/imageLoad/[load_image]",
+              params: {load_image: uri, toBraille: toBraille.toString()},
+            });
+          } else {
+            router.push({
+              pathname: "/imageLoad/[load_image]",
+              params: {load_image: uri, toBraille: toBraille.toString()},
+            });
+          }
+
+        }
+        else if (["txt"].includes(extension)) {
+          // await handleTextOrBrfFile(uri, extension);
+
+        }
+        else if (["brf"].includes(extension)) {
+          // await handleTextOrBrfFile(uri, extension);
+
+        }
+        else {
+          Alert.alert("지원하지 않는 확장자", `.png, .jpg, .jpeg, .txt, 혹은 .brf 파일만을 선택할 수 있습니다.`);
+        }
+
       }
+
+
     } catch (error) {
       console.error("Error picking file:", error);
     }
+    // try {
+    //   let result = await DocumentPicker.getDocumentAsync({
+    //     type: "*/*",
+    //     copyToCacheDirectory: true,
+    //   });
+
+    //   if (!result.canceled && result.assets?.[0]?.uri) {
+    //     console.log("URI:", result.assets[0].uri);
+    //     router.push({
+    //       pathname: "/imageLoad/[load_image]",
+    //       params: {load_image: result.assets[0].uri, toBraille: "false"},
+    //     });
+    //   }
+    // } catch (error) {
+    //   console.error("Error picking file:", error);
+    // }
 
   };
 
